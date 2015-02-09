@@ -1530,6 +1530,7 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
             Assert.Equal(expectedContent, body);
         }
 
+        [Fact]
         public async Task ModelBinder_FormatsDontMatch_ThrowsUserFriendlyException()
         {
             // Arrange
@@ -1583,14 +1584,14 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
             var client = server.CreateClient();
             var url = "http://localhost/GroupNames";
             var expectedDictionary = new Dictionary<string, string>
-            {
-                { "Model", "MakeAndModelGroup" },
-                { "Make", "MakeAndModelGroup" },
-                { "Vin", null },
-                { "Year", null },
-                { "InspectedDates", null },
-                { "LastUpdatedTrackingId", "TrackingIdGroup" },
-            };
+                {
+                    { "Model", "MakeAndModelGroup" },
+                    { "Make", "MakeAndModelGroup" },
+                    { "Vin", null },
+                    { "Year", null },
+                    { "InspectedDates", null },
+                    { "LastUpdatedTrackingId", "TrackingIdGroup" },
+                };
 
             // Act
             var response = await client.GetAsync(url);
@@ -1600,6 +1601,66 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
             var responseContent = await response.Content.ReadAsStringAsync();
             var dictionary = JsonConvert.DeserializeObject<IDictionary<string, string>>(responseContent);
             Assert.Equal(expectedDictionary, dictionary);
+        }
+
+        [Fact]
+        public async Task FormCollectionModelBinder_CanBind_FormValues()
+        {
+            // Arrange
+            var server = TestServer.Create(_services, _app);
+            var client = server.CreateClient();
+            var url = "http://localhost/FormCollection/ReturnValuesAsList";
+            var nameValueCollection = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string,string>("field1", "value1"),
+                new KeyValuePair<string,string>("field2", "value2"),
+            };
+            var formData = new FormUrlEncodedContent(nameValueCollection);
+
+            // Act
+            var response = await client.PostAsync(url, formData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var valuesList = JsonConvert.DeserializeObject<IList<string>>(
+                                    await response.Content.ReadAsStringAsync());
+            Assert.Equal(new List<string> { "value1", "value2" }, valuesList);
+        }
+
+        [Fact]
+        public async Task FormCollectionModelBinder_CannotBind_NonFormValues()
+        {
+            // Arrange
+            var server = TestServer.Create(_services, _app);
+            var client = server.CreateClient();
+            var url = "http://localhost/FormCollection/ReturnValuesAsList";
+            var data = new StringContent("Non form content");
+
+            // Act
+            var response = await client.PostAsync(url, data);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task FormCollectionModelBinder_CanBind_FormWithFile()
+        {
+            // Arrange
+            var server = TestServer.Create(_services, _app);
+            var client = server.CreateClient();
+            var url = "http://localhost/FormCollection/ReturnFileContent";
+            var expectedContent = "Test Content";
+            var formData = new MultipartFormDataContent("Upload----");
+            formData.Add(new StringContent(expectedContent), "File", "test.txt");
+
+            // Act
+            var response = await client.PostAsync(url, formData);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var fileContent = await response.Content.ReadAsStringAsync();
+            Assert.Equal(expectedContent, fileContent);
         }
     }
 }

@@ -113,6 +113,22 @@ namespace MvcSample.Web
         }
 
         /// <summary>
+        /// Action that shows binding of form values to <see cref="IFormCollection"/>.
+        /// </summary>
+        public ActionResult PostForm(IFormCollection form)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("MyView");
+            }
+
+            ViewBag.Field1 = form["field1"];
+            ViewBag.Field2 = form["field2"];
+
+            return View();
+        }
+
+        /// <summary>
         /// Action that exercises input formatter
         /// </summary>
         public ActionResult Post([FromBody]User user)
