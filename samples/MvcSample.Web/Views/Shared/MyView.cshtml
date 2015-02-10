@@ -57,13 +57,6 @@
         <input type="file" name="files" id="file2" />
         <input type="submit" value="submit" />
     </form>
-    <br/>
-    Form Collection Demo: <br/>
-    <form action="Home/PostForm" method="post" enctype="multipart/form-data">
-        <input type="text" name="field1" id="field1" />
-        <input type="text" name="field2" id="field2" />
-        <input type="submit" value="submit" />
-    </form>
 </div>
 <div class="row">
     <h3 title="@(Model?.Name)" class="@nullValue">Hello @Html.DisplayTextFor(User => User)! Happy @(Model?.Age) birthday.</h3>

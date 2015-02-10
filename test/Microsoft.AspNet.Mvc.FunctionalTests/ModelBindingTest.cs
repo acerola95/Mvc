@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Core.Collections;
 using Microsoft.AspNet.TestHost;
 using ModelBindingWebSite;
 using ModelBindingWebSite.ViewModels;
@@ -1633,14 +1635,17 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
             // Arrange
             var server = TestServer.Create(_services, _app);
             var client = server.CreateClient();
-            var url = "http://localhost/FormCollection/ReturnValuesAsList";
+            var url = "http://localhost/FormCollection/ReturnCollectionCount";
             var data = new StringContent("Non form content");
 
             // Act
             var response = await client.PostAsync(url, data);
 
             // Assert
-            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var collectionCount = JsonConvert.DeserializeObject<int>(
+                                    await response.Content.ReadAsStringAsync());
+            Assert.Equal(0, collectionCount);
         }
 
         [Fact]

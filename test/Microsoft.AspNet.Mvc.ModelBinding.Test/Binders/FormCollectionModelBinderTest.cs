@@ -61,10 +61,10 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         }
 
         [Fact]
-        public async Task FormCollectionModelBinder_NoForm_BindSuccessful_ReturnsNull()
+        public async Task FormCollectionModelBinder_NoForm_BindSuccessful_ReturnsEmptyFormCollection()
         {
             // Arrange
-            var httpContext = GetMockHttpContext(null);
+            var httpContext = GetMockHttpContext(null, hasForm: false);
             var bindingContext = GetBindingContext(typeof(IFormCollection), httpContext);
             var binder = new FormCollectionModelBinder();
 
@@ -73,7 +73,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
 
             // Assert
             Assert.True(result);
-            Assert.Null(bindingContext.Model);
+            Assert.IsType(typeof(FormCollection), bindingContext.Model);
+            Assert.Empty((FormCollection)bindingContext.Model);
         }
 
         private static ModelBindingContext GetBindingContext(Type modelType, HttpContext httpContext)
@@ -94,12 +95,12 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             return bindingContext;
         }
 
-        private static HttpContext GetMockHttpContext(IFormCollection formCollection)
+        private static HttpContext GetMockHttpContext(IFormCollection formCollection, bool hasForm = true)
         {
             var httpContext = new Mock<HttpContext>();
             httpContext.Setup(h => h.Request.ReadFormAsync(It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(formCollection));
-            httpContext.Setup(h => h.Request.HasFormContentType).Returns(true);
+            httpContext.Setup(h => h.Request.HasFormContentType).Returns(hasForm);
             return httpContext.Object;
         }
     }

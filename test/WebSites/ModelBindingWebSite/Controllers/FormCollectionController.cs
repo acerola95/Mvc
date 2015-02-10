@@ -12,17 +12,17 @@ namespace ModelBindingWebSite.Controllers
     {
         public IList<string> ReturnValuesAsList(IFormCollection form)
         {
-            if (!ModelState.IsValid || form == null)
-            {
-                return null;
-            }
-
             var valuesList = new List<string>();
 
             valuesList.Add(form["field1"]);
             valuesList.Add(form["field2"]);
 
             return valuesList;
+        }
+
+        public int ReturnCollectionCount(IFormCollection form)
+        {
+            return form.Count;
         }
 
         public ActionResult ReturnFileContent(IFormCollection form)

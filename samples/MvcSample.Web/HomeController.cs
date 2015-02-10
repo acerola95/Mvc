@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Core.Collections;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Rendering;
 using MvcSample.Web.Models;
@@ -109,22 +110,6 @@ namespace MvcSample.Web
             {
                 await f.SaveAsAsync(Path.Combine(HostingEnvironment.WebRoot, "test-file" + files.IndexOf(f)));
             }
-            return View();
-        }
-
-        /// <summary>
-        /// Action that shows binding of form values to <see cref="IFormCollection"/>.
-        /// </summary>
-        public ActionResult PostForm(IFormCollection form)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View("MyView");
-            }
-
-            ViewBag.Field1 = form["field1"];
-            ViewBag.Field2 = form["field2"];
-
             return View();
         }
 
