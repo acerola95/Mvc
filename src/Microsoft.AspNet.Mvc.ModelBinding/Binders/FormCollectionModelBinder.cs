@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Http.Core.Collections;
@@ -17,8 +17,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         /// <inheritdoc />
         public async Task<bool> BindModelAsync([NotNull] ModelBindingContext bindingContext)
         {
-            if (!bindingContext.ModelType.GetTypeInfo().IsAssignableFrom(
-                    typeof(FormCollection).GetTypeInfo()))
+            if (bindingContext.ModelType != typeof(IFormCollection)
+                && bindingContext.ModelType != typeof(FormCollection))
             {
                 return false;
             }
@@ -26,7 +26,10 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             var request = bindingContext.OperationBindingContext.HttpContext.Request;
             if (request.HasFormContentType)
             {
-                bindingContext.Model = await request.ReadFormAsync();
+                var form = await request.ReadFormAsync();
+                var formValuesLookup = form.ToDictionary(p => p.Key,
+                                                         p => p.Value);
+                bindingContext.Model = new FormCollection(formValuesLookup, form.Files);
             }
             else
             {

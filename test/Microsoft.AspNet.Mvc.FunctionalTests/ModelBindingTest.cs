@@ -1586,14 +1586,14 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
             var client = server.CreateClient();
             var url = "http://localhost/GroupNames";
             var expectedDictionary = new Dictionary<string, string>
-                {
-                    { "Model", "MakeAndModelGroup" },
-                    { "Make", "MakeAndModelGroup" },
-                    { "Vin", null },
-                    { "Year", null },
-                    { "InspectedDates", null },
-                    { "LastUpdatedTrackingId", "TrackingIdGroup" },
-                };
+            {
+                { "Model", "MakeAndModelGroup" },
+                { "Make", "MakeAndModelGroup" },
+                { "Vin", null },
+                { "Year", null },
+                { "InspectedDates", null },
+                { "LastUpdatedTrackingId", "TrackingIdGroup" },
+            };
 
             // Act
             var response = await client.GetAsync(url);

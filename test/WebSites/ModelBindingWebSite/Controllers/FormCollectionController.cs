@@ -27,11 +27,6 @@ namespace ModelBindingWebSite.Controllers
 
         public ActionResult ReturnFileContent(IFormCollection form)
         {
-            if (!ModelState.IsValid || form == null)
-            {
-                return null;
-            }
-
             var file = form.Files.GetFile("File");
             using (var reader = new StreamReader(file.OpenReadStream()))
             {
