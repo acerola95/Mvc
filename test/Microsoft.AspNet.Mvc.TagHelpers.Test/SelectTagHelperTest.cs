@@ -243,7 +243,7 @@ namespace Microsoft.AspNet.Mvc.TagHelpers
 
         [Theory]
         [MemberData(nameof(GeneratesExpectedDataSet))]
-        public async Task ProcessAsync_GeneratesExpectedOutput_WithItems(
+        public async Task ProcessAsync_WithItems_GeneratesExpectedOutput_DoesNotChangeSelectList(
             object model,
             Type containerType,
             Func<object> modelAccessor,
@@ -296,10 +296,11 @@ namespace Microsoft.AspNet.Mvc.TagHelpers
             var viewContext = TestableHtmlGenerator.GetViewContext(model, htmlGenerator, metadataProvider);
 
             var items = new SelectList(new[] { "", "outer text", "inner text", "other text" });
-            var savedDisabled = items.ToDictionary(item => item.Text, item => item.Disabled);
-            var savedGroup = items.ToDictionary(item => item.Text, item => item.Group);
-            var savedSelected = items.ToDictionary(item => item.Text, item => item.Selected);
-            var savedValue = items.ToDictionary(item => item.Text, item => item.Value);
+            var savedDisabled = items.Select(item => item.Disabled).ToList();
+            var savedGroup = items.Select(item => item.Group).ToList();
+            var savedSelected = items.Select(item => item.Selected).ToList();
+            var savedText = items.Select(item => item.Text).ToList();
+            var savedValue = items.Select(item => item.Value).ToList();
             var tagHelper = new SelectTagHelper
             {
                 For = modelExpression,
@@ -327,10 +328,11 @@ namespace Microsoft.AspNet.Mvc.TagHelpers
             var selectedValues = Assert.IsAssignableFrom<ICollection<string>>(keyValuePair.Value);
             Assert.InRange(selectedValues.Count, 0, 1);
 
-            Assert.Equal(savedDisabled, items.ToDictionary(item => item.Text, item => item.Disabled));
-            Assert.Equal(savedGroup, items.ToDictionary(item => item.Text, item => item.Group));
-            Assert.Equal(savedSelected, items.ToDictionary(item => item.Text, item => item.Selected));
-            Assert.Equal(savedValue, items.ToDictionary(item => item.Text, item => item.Value));
+            Assert.Equal(savedDisabled, items.Select(item => item.Disabled));
+            Assert.Equal(savedGroup, items.Select(item => item.Group));
+            Assert.Equal(savedSelected, items.Select(item => item.Selected));
+            Assert.Equal(savedText, items.Select(item => item.Text));
+            Assert.Equal(savedValue, items.Select(item => item.Value));
         }
 
         [Theory]

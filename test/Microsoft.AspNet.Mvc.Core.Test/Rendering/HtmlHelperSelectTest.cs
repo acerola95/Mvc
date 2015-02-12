@@ -300,27 +300,29 @@ namespace Microsoft.AspNet.Mvc.Rendering
 
         [Theory]
         [MemberData(nameof(DropDownListDataSet))]
-        public void DropDownList_WithNullModel_GeneratesExpectedValue(
+        public void DropDownList_WithNullModel_GeneratesExpectedValue_DoesNotChangeSelectList(
             IEnumerable<SelectListItem> selectList,
             string expectedHtml,
             string ignoredHtml)
         {
             // Arrange
             var helper = DefaultTemplatesUtilities.GetHtmlHelper();
-            var savedDisabled = selectList.ToDictionary(item => item.Text, item => item.Disabled);
-            var savedGroup = selectList.ToDictionary(item => item.Text, item => item.Group);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
-            var savedValue = selectList.ToDictionary(item => item.Text, item => item.Value);
+            var savedDisabled = selectList.Select(item => item.Disabled).ToList();
+            var savedGroup = selectList.Select(item => item.Group).ToList();
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
+            var savedText = selectList.Select(item => item.Text).ToList();
+            var savedValue = selectList.Select(item => item.Value).ToList();
 
             // Act
             var html = helper.DropDownList("Property1", selectList, optionLabel: null, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedDisabled, selectList.ToDictionary(item => item.Text, item => item.Disabled));
-            Assert.Equal(savedGroup, selectList.ToDictionary(item => item.Text, item => item.Group));
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
-            Assert.Equal(savedValue, selectList.ToDictionary(item => item.Text, item => item.Value));
+            Assert.Equal(savedDisabled, selectList.Select(item => item.Disabled));
+            Assert.Equal(savedGroup, selectList.Select(item => item.Group));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
+            Assert.Equal(savedText, selectList.Select(item => item.Text));
+            Assert.Equal(savedValue, selectList.Select(item => item.Value));
         }
 
         [Theory]
@@ -333,14 +335,14 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new DefaultTemplatesUtilities.ObjectTemplateModel { Property1 = "2" };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.DropDownList("Property1", selectList, optionLabel: null, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -352,7 +354,7 @@ namespace Microsoft.AspNet.Mvc.Rendering
         {
             // Arrange
             var helper = DefaultTemplatesUtilities.GetHtmlHelper();
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.DropDownListFor(
@@ -363,7 +365,7 @@ namespace Microsoft.AspNet.Mvc.Rendering
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -376,7 +378,7 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new DefaultTemplatesUtilities.ObjectTemplateModel { Property1 = "2" };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.DropDownListFor(
@@ -387,12 +389,12 @@ namespace Microsoft.AspNet.Mvc.Rendering
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
         [MemberData(nameof(ListBoxDataSet))]
-        public void ListBox_WithNullModel_GeneratesExpectedValue(
+        public void ListBox_WithNullModel_GeneratesExpectedValue_DoesNotChangeSelectList(
             IEnumerable<SelectListItem> selectList,
             string expectedHtml,
             string ignoredHtml1,
@@ -400,20 +402,22 @@ namespace Microsoft.AspNet.Mvc.Rendering
         {
             // Arrange
             var helper = DefaultTemplatesUtilities.GetHtmlHelper<ModelContainingList>(model: null);
-            var savedDisabled = selectList.ToDictionary(item => item.Text, item => item.Disabled);
-            var savedGroup = selectList.ToDictionary(item => item.Text, item => item.Group);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
-            var savedValue = selectList.ToDictionary(item => item.Text, item => item.Value);
+            var savedDisabled = selectList.Select(item => item.Disabled).ToList();
+            var savedGroup = selectList.Select(item => item.Group).ToList();
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
+            var savedText = selectList.Select(item => item.Text).ToList();
+            var savedValue = selectList.Select(item => item.Value).ToList();
 
             // Act
             var html = helper.ListBox("Property1", selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedDisabled, selectList.ToDictionary(item => item.Text, item => item.Disabled));
-            Assert.Equal(savedGroup, selectList.ToDictionary(item => item.Text, item => item.Group));
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
-            Assert.Equal(savedValue, selectList.ToDictionary(item => item.Text, item => item.Value));
+            Assert.Equal(savedDisabled, selectList.Select(item => item.Disabled));
+            Assert.Equal(savedGroup, selectList.Select(item => item.Group));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
+            Assert.Equal(savedText, selectList.Select(item => item.Text));
+            Assert.Equal(savedValue, selectList.Select(item => item.Value));
         }
 
         [Theory]
@@ -427,14 +431,14 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new ModelContainingList { Property1 = { "2" } };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.ListBox("Property1", selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -448,14 +452,14 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new ModelContainingList { Property1 = { "1", "3" } };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.ListBox("Property1", selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -468,14 +472,14 @@ namespace Microsoft.AspNet.Mvc.Rendering
         {
             // Arrange
             var helper = DefaultTemplatesUtilities.GetHtmlHelper<ModelContainingList>(model: null);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.ListBoxFor(value => value.Property1, selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -489,14 +493,14 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new ModelContainingList { Property1 = { "2" } };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.ListBoxFor(value => value.Property1, selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         [Theory]
@@ -510,24 +514,19 @@ namespace Microsoft.AspNet.Mvc.Rendering
             // Arrange
             var model = new ModelContainingList { Property1 = { "1", "3" } };
             var helper = DefaultTemplatesUtilities.GetHtmlHelper(model);
-            var savedSelected = selectList.ToDictionary(item => item.Text, item => item.Selected);
+            var savedSelected = selectList.Select(item => item.Selected).ToList();
 
             // Act
             var html = helper.ListBoxFor(value => value.Property1, selectList, htmlAttributes: null);
 
             // Assert
             Assert.Equal(expectedHtml, html.ToString());
-            Assert.Equal(savedSelected, selectList.ToDictionary(item => item.Text, item => item.Selected));
+            Assert.Equal(savedSelected, selectList.Select(item => item.Selected));
         }
 
         private class ModelContainingList
         {
-            public ModelContainingList()
-            {
-                Property1 = new List<string>();
-            }
-
-            public List<string> Property1 { get; }
+            public List<string> Property1 { get; } = new List<string>();
         }
     }
 }

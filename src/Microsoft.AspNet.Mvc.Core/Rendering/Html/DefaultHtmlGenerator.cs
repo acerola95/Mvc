@@ -1064,13 +1064,11 @@ namespace Microsoft.AspNet.Mvc.Rendering
             var newSelectList = new List<SelectListItem>();
             foreach (SelectListItem item in selectList)
             {
-                var selected =
-                    (item.Value != null) ? selectedValues.Contains(item.Value) : selectedValues.Contains(item.Text);
                 var newItem = new SelectListItem
                 {
                     Disabled = item.Disabled,
                     Group = item.Group,
-                    Selected = selected,
+                    Selected = selectedValues.Contains(item.Value ?? item.Text),
                     Text = item.Text,
                     Value = item.Value,
                 };
